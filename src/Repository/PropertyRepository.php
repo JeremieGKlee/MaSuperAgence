@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Property;
+use App\Entity\PropertySearch;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
 
 /**
  * @method Property|null find($id, $lockMode = null, $lockVersion = null)
@@ -21,14 +23,65 @@ class PropertyRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Property[]
+     * @return Query
      */
-    public function findAllVisible(): array
+    public function findAllVisibleQuery(PropertySearch $search): Query
     {
-        return $this->findVisibleQuery()
-            ->getQuery()
-            ->getResult()
-        ;
+        $query = $this->findVisibleQuery();
+
+        if ($search->getMaxPrice())
+        {
+            $query = $query
+            ->andwhere('p.price <= :maxprice')
+            ->setParameter('maxprice', $search->getMaxPrice());
+        }
+
+        if ($search->getMinSurface())
+        {
+            $query = $query
+            ->andwhere('p.surface >= :minsurface')
+            ->setParameter('minsurface', $search->getMinSurface());
+        }
+        // if ($search->getMinRooms())
+        // {
+        //     $query = $query
+        //     ->andwhere('p.price <= :maxprice')
+        //     ->setParameter('maxprice', $search->getMaxPrice());
+        // }
+
+        // if ($search->getMinBedrooms())
+        // {
+        //     $query = $query
+        //     ->andwhere('p.surface >= :minsurface')
+        //     ->setParameter('minsurface', $search->getMinSurface());
+        // }
+        // if ($search->getSelectTypeHeat())
+        // {
+        //     $query = $query
+        //     ->andwhere('p.price <= :maxprice')
+        //     ->setParameter('maxprice', $search->getMaxPrice());
+        // }
+
+        // if ($search->getMaxFloor())
+        // {
+        //     $query = $query
+        //     ->andwhere('p.surface >= :minsurface')
+        //     ->setParameter('minsurface', $search->getMinSurface());
+        // }
+        // if ($search->getSelectCity())
+        // {
+        //     $query = $query
+        //     ->andwhere('p.price <= :maxprice')
+        //     ->setParameter('maxprice', $search->getMaxPrice());
+        // }
+
+        // if ($search->getSelectPostalCode())
+        // {
+        //     $query = $query
+        //     ->andwhere('p.surface >= :minsurface')
+        //     ->setParameter('minsurface', $search->getMinSurface());
+        // }
+        return $query->getQuery();
     }
 
     /**
