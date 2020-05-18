@@ -2,11 +2,28 @@
 namespace App\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class PropertySearch
 {
+    // const SELECTTYPEHEAT =
+    // [
+    //     1 => 'Electrique',
+    //     2 => 'Gaz'
+    // ];
+
+    // const TYPESORT =
+    // [
+    //     1 => 'Maison individuelle',
+    //     2 => 'Appartement',
+    //     3 => 'Immeuble',
+    //     4 => 'Garage',
+    //     5 => 'Terrain nu'
+    // ];
+
     /**
      * @var int|null
+     * @Assert\Range(min=20000, max=10000000)
      */
     private $maxPrice;
 
@@ -35,6 +52,7 @@ class PropertySearch
 
     /**
      * @var int|null
+     * @Assert\Range(min=0, max=20)
      */
     private $maxFloor;
 
@@ -47,6 +65,21 @@ class PropertySearch
      * @var string|null
      */
     private $selectPostalCode;
+
+    /**
+     * @var int|null
+     */
+    private $typeSort;
+
+    /**
+     * @var ArrayCollection
+     */
+    private $options;
+
+    public function __construct()
+    {
+        $this->options = new ArrayCollection();
+    }
 
     /**
      * Get the value of maxPrice
@@ -168,6 +201,11 @@ class PropertySearch
         return $this;
     }
 
+    // public function getTypeHeatType(): string
+    // {
+    //     return self::SELECTTYPEHEAT [$this->selectTypeHeat];
+    // }
+
     /**
      * Get the value of maxFloor
      *
@@ -238,5 +276,56 @@ class PropertySearch
         $this->selectPostalCode = $selectPostalCode;
 
         return $this;
+    }
+
+    /**
+     * Get the value of typeSort
+     *
+     * @return  int|null
+     */ 
+    public function getTypeSort(): ?string
+    {
+        return $this->typeSort;
+    }
+
+    /**
+     * Set the value of typeSort
+     *
+     * @param  int|null  $typeSort
+     *
+     * @return  self
+     */ 
+    public function setTypeSort(int $typeSort)
+    {
+        $this->typeSort = $typeSort;
+
+        return $this;
+    }
+
+    // public function getTypeSortSelect(): int
+    // {
+    //     return self::TYPESORT [$this->typeSort];
+    // }
+
+    /**
+     * Get the value of options
+     *
+     * @return  ArrayCollection
+     */ 
+    public function getOptions(): ArrayCollection
+    {
+        return $this->options;
+    }
+
+    /**
+     * Set the value of options
+     *
+     * @param  ArrayCollection  $options
+     *
+     * @return  self
+     */ 
+    public function setOptions(ArrayCollection $options): void
+    {
+        $this->options = $options;
     }
 }

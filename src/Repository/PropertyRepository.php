@@ -29,58 +29,80 @@ class PropertyRepository extends ServiceEntityRepository
     {
         $query = $this->findVisibleQuery();
 
+        if ($search->getTypeSort())
+        {
+            $query = $query
+            ->andWhere('p.type = :typesort')
+            ->setParameter('typesort', $search->getTypeSort());
+        }
         if ($search->getMaxPrice())
         {
             $query = $query
-            ->andwhere('p.price <= :maxprice')
+            ->andWhere('p.price <= :maxprice')
             ->setParameter('maxprice', $search->getMaxPrice());
         }
 
         if ($search->getMinSurface())
         {
             $query = $query
-            ->andwhere('p.surface >= :minsurface')
+            ->andWhere('p.surface >= :minsurface')
             ->setParameter('minsurface', $search->getMinSurface());
         }
-        // if ($search->getMinRooms())
-        // {
-        //     $query = $query
-        //     ->andwhere('p.price <= :maxprice')
-        //     ->setParameter('maxprice', $search->getMaxPrice());
-        // }
+        if ($search->getMinRooms())
+        {
+            $query = $query
+            ->andWhere('p.rooms >= :minrooms')
+            ->setParameter('minrooms', $search->getMinRooms());
+        }
 
-        // if ($search->getMinBedrooms())
-        // {
-        //     $query = $query
-        //     ->andwhere('p.surface >= :minsurface')
-        //     ->setParameter('minsurface', $search->getMinSurface());
-        // }
-        // if ($search->getSelectTypeHeat())
-        // {
-        //     $query = $query
-        //     ->andwhere('p.price <= :maxprice')
-        //     ->setParameter('maxprice', $search->getMaxPrice());
-        // }
+        if ($search->getMinBedrooms())
+        {
+            $query = $query
+            ->andWhere('p.bedrooms >= :minbedrooms')
+            ->setParameter('minbedrooms', $search->getMinBedrooms());
+        }
+        if ($search->getSelectTypeHeat())
+        {
+            $query = $query
+            ->andWhere('p.heat = :selecttypeheat')
+            ->setParameter('selecttypeheat', $search->getselectTypeHeat());
+            // dump('selecttypeheat', $search->getselectTypeHeat());
+            // dump('P.heat');
+            // die;
+        }
 
-        // if ($search->getMaxFloor())
-        // {
-        //     $query = $query
-        //     ->andwhere('p.surface >= :minsurface')
-        //     ->setParameter('minsurface', $search->getMinSurface());
-        // }
-        // if ($search->getSelectCity())
-        // {
-        //     $query = $query
-        //     ->andwhere('p.price <= :maxprice')
-        //     ->setParameter('maxprice', $search->getMaxPrice());
-        // }
+        if ($search->getMaxFloor())
+        {
+            $query = $query
+            ->andWhere('p.floor<= :maxfloor')
+            ->setParameter('maxfloor', $search->getMaxFloor());
+        }
+        if ($search->getSelectCity())
+        {
+            $query = $query
+            ->andWhere('p.city = :selectcity')
+            ->setParameter('selectcity', $search->getSelectCity());
+        }
 
-        // if ($search->getSelectPostalCode())
-        // {
-        //     $query = $query
-        //     ->andwhere('p.surface >= :minsurface')
-        //     ->setParameter('minsurface', $search->getMinSurface());
-        // }
+        if ($search->getSelectPostalCode())
+        {
+            $query = $query
+            ->andWhere('p.postal_code = :selectpostalcode')
+            ->setParameter('selectpostalcode', $search->getSelectPostalCode());
+        }
+
+        if ($search->getOptions()->count() > 0)
+        {
+            $k = 0;
+            foreach($search->getOptions() as $k => $option)
+            {
+                $k++;
+                $query = $query
+                    -> andWhere(":option$k MEMBER OF p.options")
+                    -> setParameter("option$k", $option);
+            }
+        }
+
         return $query->getQuery();
     }
 

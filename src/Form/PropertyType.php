@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Option;
 use App\Entity\Property;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,6 +15,10 @@ class PropertyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('type', ChoiceType::class,
+            [
+                'choices'=> $this->getChoicesType()
+            ])
             ->add('title')
             ->add('description')
             ->add('surface')
@@ -23,6 +29,12 @@ class PropertyType extends AbstractType
             ->add('heat', ChoiceType::class,
             [
                 'choices'=> $this->getChoices()
+            ])
+            ->add('options', EntityType::class,
+            [
+                'class' => Option::class ,
+                'choice_label' => 'name',
+                'multiple' => true
             ])
             ->add('city')
             ->add('address')
@@ -43,6 +55,17 @@ class PropertyType extends AbstractType
     private function getChoices()
     {
         $choices = Property::HEAT;
+        $output = [];
+        foreach($choices as $k => $v)
+        {
+            $output[$v] = $k;
+        }
+        return $output;
+    }
+
+    private function getChoicesType()
+    {
+        $choices = Property::TYPE;
         $output = [];
         foreach($choices as $k => $v)
         {
